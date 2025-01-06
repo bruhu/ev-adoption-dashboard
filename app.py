@@ -7,3 +7,4 @@ sales_df = load_sales_data()
 # Streamlit stuff
 st.title('EV Sales Data')
 st.write(sales_df)
+
