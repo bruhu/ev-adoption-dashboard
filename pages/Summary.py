@@ -55,8 +55,9 @@ with col3:
 
 
 
-# interactive barplot
+st.title('Sales Summary')
 
+# interactive barplot
 if 'year' in summary_df.columns and 'units_sold' in summary_df.columns and 'powertrain' in summary_df.columns:
     sales_by_year_powertrain = summary_df.groupby(['year', 'powertrain'])['units_sold'].sum().reset_index() # aggregate sales data by year and powertrain
 
