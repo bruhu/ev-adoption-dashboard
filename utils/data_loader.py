@@ -21,3 +21,14 @@ def load_sales_data():
     sales_df = sales_df[cols_to_keep]
     
     return sales_df
+
+def load_summary_data():
+    ev_sales_df, _ = load_data()
+
+    # Filter, select relevant columns, rename, and convert 'units_sold' in a single chain
+    summary_df = (ev_sales_df[ev_sales_df['parameter'] == 'EV sales']
+                  .loc[:, ['region', 'year', 'powertrain', 'value']]
+                  .rename(columns={'value': 'units_sold'})
+                  .assign(units_sold=lambda x: x['units_sold'].astype(int)))
+    
+    return summary_df
