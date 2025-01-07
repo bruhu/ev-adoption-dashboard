@@ -20,47 +20,71 @@ with st.expander('Click to expand for more details'):
     st.write('You can also add charts, data tables, or any other Streamlit widgets!')
 
 # metrics
-data = {
-    'year': [2023, 2022, 2021, 2020],
-    'region': ['Global', 'Global', 'Global', 'Global'],
-    'units_sold': [5000000, 4500000, 4000000, 3500000],
-    'charging_points': [100000, 90000, 80000, 75000]
-}
-
-df = pd.DataFrame(data)
+# Read the CSV files
+sales_df = pd.read_csv('data/raw/IEA-EV-dataEV salesHistoricalCars.csv')
+charging_df = pd.read_csv('data/raw/IEA-EV-dataEV charging pointsHistoricalEV.csv')
 
 # load sales data
 summary_df = load_summary_data()
 
+# Process sales data
+sales_df = sales_df[sales_df['parameter'] == 'EV sales']
+sales_by_year = sales_df.groupby('year')['value'].sum().reset_index()
+
+# Process charging points data
+charging_df = charging_df.groupby('year')['value'].sum().reset_index()
+
 # Metric 1: World EV Sales - Current Year and Delta from Previous Year
-current_year_sales = df[df['year'] == 2023]['units_sold'].sum()
-previous_year_sales = df[df['year'] == 2022]['units_sold'].sum()
+current_year_sales = sales_by_year[sales_by_year['year'] == 2023]['value'].sum()
+previous_year_sales = sales_by_year[sales_by_year['year'] == 2022]['value'].sum()
 delta_sales = current_year_sales - previous_year_sales
 
 # Metric 2: World EV Sales Growth - Current Year and Delta from Previous Year
 if previous_year_sales != 0:
-    growth_sales = ((current_year_sales - previous_year_sales) / previous_year_sales) * 100  # Sales growth percentage
+    growth_sales = ((current_year_sales - previous_year_sales) / previous_year_sales) * 100
 else:
-    growth_sales = 0  # Handle case if previous year sales are zero
+    growth_sales = 0
 
 # Metric 3: World Charging Points - Current Year and Delta from Previous Year
-current_year_charging_points = df[df['year'] == 2023]['charging_points'].sum()
-previous_year_charging_points = df[df['year'] == 2022]['charging_points'].sum()
-delta_charging_points = current_year_charging_points - previous_year_charging_points
+current_year_charging = charging_df[charging_df['year'] == 2023]['value'].sum()
+previous_year_charging = charging_df[charging_df['year'] == 2022]['value'].sum()
+delta_charging = current_year_charging - previous_year_charging
 
 # Create three columns for displaying the metrics side by side
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric(label="World EV Sales (Sample Data)", value=f"{current_year_sales:,}", delta=f"{delta_sales:,}")
+    st.metric(label="World EV Sales", value=f"{int(current_year_sales):,}", delta=f"{int(delta_sales):,}")
 
 with col2:
-    st.metric(label="World EV Sales Growth (Sample Data)", value=f"{growth_sales:.2f}%", delta=f"{growth_sales - ((previous_year_sales - current_year_sales) / previous_year_sales) * 100:.2f}%")
+    st.metric(label="World EV Sales Growth", value=f"{growth_sales:.2f}%", delta=f"{growth_sales - ((previous_year_sales - current_year_sales) / previous_year_sales) * 100:.2f}%")
 
 with col3:
-    st.metric(label="World Charging Points (Sample Data)", value=f"{current_year_charging_points:,}", delta=f"{delta_charging_points:,}")
+    st.metric(label="World Charging Points", value=f"{int(current_year_charging):,}", delta=f"{int(delta_charging):,}")
 
+# After loading the external CSS file and before the metrics
+st.markdown("""
+    <style>
+    /* For positive values */
+    [data-testid="stMetricDelta"] svg {
+        color: #86A873 !important;
+    }
+    
+    [data-testid="stMetricDelta"] div {
+        color: #86A873 !important;
+    }
 
+    /* Ensure the value itself uses the yellow color when positive */
+    .css-1wivap2 {
+        color: #86A873 !important;
+    }
+    
+    /* Additional class for positive metrics */
+    .css-1yk9tp8 {
+        color: #86A873 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.subheader('Sales Summary')
 

@@ -1,6 +1,8 @@
 import pandas as pd
+import streamlit as st
 
-# Load EV sales and charging points data
+# Cache the main data loading function
+@st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_data():
     sales_url = 'https://api.iea.org/evs?parameters=EV%20sales&category=Historical&mode=Cars&csv=true'
     charging_points_url = 'https://api.iea.org/evs?parameters=EV%20charging%20points&category=Historical&mode=EV&csv=true'
@@ -10,7 +12,8 @@ def load_data():
     
     return ev_sales_df, ev_charging_points_df
 
-# Process the EV sales data
+# Cache the sales data processing
+@st.cache_data
 def load_sales_data():
     ev_sales_df, _ = load_data()
     
@@ -22,10 +25,11 @@ def load_sales_data():
     
     return sales_df
 
+# Cache the summary data processing
+@st.cache_data
 def load_summary_data():
     ev_sales_df, _ = load_data()
 
-    # Filter, select relevant columns, rename, and convert 'units_sold' in a single chain
     summary_df = (ev_sales_df[ev_sales_df['parameter'] == 'EV sales']
                   .loc[:, ['region', 'year', 'powertrain', 'value']]
                   .rename(columns={'value': 'units_sold'})
