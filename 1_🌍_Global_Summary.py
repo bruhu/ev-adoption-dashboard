@@ -4,9 +4,16 @@ import pandas as pd
 import plotly.express as px
 from utils.data_loader import load_summary_data
 
-st.title('Summary')
-st.subheader('Subheader')
+# Load the external CSS file
+css_file_path = './assets/styles.css'
+st.set_page_config(page_title="Global Summary", page_icon="🌍")
 
+with open(css_file_path) as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
+st.title('🌍 Global Summary')
+st.subheader('Subheader')
+    
 # expander: about and data source ref
 with st.expander('Click to expand for more details'):
     st.write('Add information about data sources.')
@@ -55,7 +62,7 @@ with col3:
 
 
 
-st.title('Sales Summary')
+st.subheader('Sales Summary')
 
 # interactive barplot
 if 'year' in summary_df.columns and 'units_sold' in summary_df.columns and 'powertrain' in summary_df.columns:
