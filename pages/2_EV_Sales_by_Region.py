@@ -1,5 +1,11 @@
 import streamlit as st
 
+# Add page config at the top
+st.set_page_config(
+    page_title="EV Sales by Region",
+    page_icon="🗺️",  # Map emoji as icon
+)
+
 st.title('EV Sales Dashboard')
 st.text('EV Sales by Region')
 
