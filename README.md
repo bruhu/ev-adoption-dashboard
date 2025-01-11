@@ -11,7 +11,7 @@ This repository contains a Streamlit application for exploring Electric Vehicle 
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/ev-adoption-dashboard.git
+   git clone https://github.com/bruhu/ev-adoption-dashboard.git
    cd ev-adoption-dashboard
    ```
 
